@@ -7,27 +7,29 @@ int main() {
   cout << std::unitbuf;
   cerr << std::unitbuf;
 
-  // TODO: Uncomment the code below to pass the first stage
-  cout << "$ ";
-
-
-  // i had to write only one command not found
-  string cmd;
-  getline(cin,cmd);
-  cout<<cmd<<": command not found\n";
-
-
 
   // i had to write the command not found until user doesn't stop
-  cout<<"$ ";
   while(true){
+    cout<<"$ ";
     string cmd1;
     getline(cin,cmd1);
+    stringstream ss(cmd1);
+    string word;
+    ss>>word;
 
     if(cmd1=="exit") break; // implementing the exit builtin
+    
+    else if(word=="echo"){
+      while(ss>>word){
+        if(word=="echo") continue;
+        cout<<word<<" ";
+      }
+      cout<<"\n";
+      continue;
+    }
 
     cout<<cmd1<<": command not found\n";
-    cout<<"$ ";  
+   
   }
 
 
