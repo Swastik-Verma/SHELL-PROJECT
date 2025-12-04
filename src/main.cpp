@@ -30,7 +30,7 @@ int main() {
 
     else if(word=="type"){
       ss>>word;
-      if(word!="echo" && word!="exit"){
+      if(word!="echo" && word!="exit" && word!="type"){
         cout<<word;
         while(ss>>word){
           cout<<" "<<word;
