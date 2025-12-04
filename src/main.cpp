@@ -28,6 +28,22 @@ int main() {
       continue;
     }
 
+    else if(word=="type"){
+      ss>>word;
+      if(word!="echo" && word!="exit"){
+        cout<<word;
+        while(ss>>word){
+          cout<<" "<<word;
+        }
+        cout<<": not found\n";
+      } 
+      else{
+        cout<<word<<" is a shell builtin";      
+        cout<<"\n";
+      }
+    }
+
+
     cout<<cmd1<<": command not found\n";
    
   }
