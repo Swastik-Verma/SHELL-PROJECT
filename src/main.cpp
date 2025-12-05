@@ -48,15 +48,16 @@ int main() {
             pos=second_idx;
     
             //building final path and searching in it
-            required_path=required_path+'/'+ path.substr(5);
+            required_path=required_path+'/'+ word.substr(5);
     
             // if got
             struct stat info;
             int result = stat(required_path.c_str(), &info);
             if(!result){
               //
-              if(info.st_mode & S_IEXEC){
+              if(info.st_mode & S_IXUSR){
                 cout<<cmd1.substr(5)<<" is "<<required_path<<"\n";
+                found=true;
                 break;
               }
             }          
