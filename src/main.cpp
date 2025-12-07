@@ -1,6 +1,20 @@
 #include <bits/stdc++.h>
+# include <filesystem>
 using namespace std;
+namespace fs = filesystem;
 
+vector<string> splitter(string str){
+  vector<string> ans;
+  size_t start=0;
+  size_t end=str.find(':');
+  while(end!=-1){
+      ans.push_back(str.substr(start,end-start));
+      start=end+1;
+      end=str.find(':',start);
+  }
+  ans.push_back(str.substr(start));
+  return ans;
+}
 
 int main() {
   // Flush after every std::cout / std:cerr
@@ -20,29 +34,55 @@ int main() {
     if(cmd1=="exit") break; // implementing the exit builtin
     
     else if(word=="echo"){
-      while(ss>>word){
-        if(word=="echo") continue;
-        cout<<word<<" ";
-      }
+      cout<<cmd1.substr(5);
       cout<<"\n";
       continue;
     }
 
     else if(word=="type"){
       ss>>word;
-      if(word!="echo" && word!="exit" && word!="type"){
-        cout<<word;
-        while(ss>>word){
-          cout<<" "<<word;
-        }
-        cout<<": not found\n";
-      } 
+      if(word=="echo"){
+        cout<<"echo is a shell builtin\n";
+      }
+      else if(word=="exit"){
+        cout<<"exit is a shell builtin\n";
+      }
       else{
-        cout<<word<<" is a shell builtin";      
-        cout<<"\n";
+        string temp=cmd1.substr(5);
+        string path=getenv("PATH");
+        vector<string> directry=splitter(path);
+        bool file_done=false;
+
+        for(auto each_path:directry){
+          auto new_path=each_path+'/'+cmd1.substr(5);
+          if(fs::exists(new_path) && fs::is_regular_file(new_path)){
+            fs::file_status s = fs::status(new_path);
+
+            fs::perms p = s.permissions();
+
+            bool isExecutable = (p & fs::perms::owner_exec) != fs::perms::none;
+
+            if(isExecutable){
+              cout<<cmd1.substr(5)<<" is "<<new_path<<"\n";
+              file_done=true;
+              break;
+            }
+          }
+        }
+        if(file_done==false){         
+          cout<<cmd1.substr(5)<<": not found\n";            
+        }
+
+
+
+        // if(1){
+        //   //here if found print path
+        // }
+        // else{
+        //   cout<<cmd1.substr(5)<<": not found\n";
+        // }
       }
     }
-
 
     else cout<<cmd1<<": command not found\n";
    
