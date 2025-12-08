@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
 # include <filesystem>
+# include <sys/wait.h>
+
 using namespace std;
 namespace fs = filesystem;
 
@@ -98,7 +100,7 @@ int main() {
       vector<char*> exec_argument = converter(argument);
 
       pid_t c=fork();
-      
+
       if(c<0){
           cout<<"Fork failed! (system failed)\n";
       }
