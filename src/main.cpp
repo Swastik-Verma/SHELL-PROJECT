@@ -108,7 +108,7 @@ int main() {
           vector<char*> exec_argument=converter(argument);
           execvp(argument[0].c_str(),exec_argument.data());  
           
-          perror("Error");
+          cout << cmd1 << ": command not found\n";
           exit(1);
       }
       else{
