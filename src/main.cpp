@@ -3,17 +3,29 @@
 using namespace std;
 namespace fs = filesystem;
 
-vector<string> splitter(string str){
+
+//function to splite a string about ':'
+vector<string> splitter(string str,char s){
   vector<string> ans;
   size_t start=0;
-  size_t end=str.find(':');
+  size_t end=str.find(s);
   while(end!=-1){
       ans.push_back(str.substr(start,end-start));
       start=end+1;
-      end=str.find(':',start);
+      end=str.find(s,start);
   }
   ans.push_back(str.substr(start));
   return ans;
+}
+
+vector<char*> converter(vector<string>& vec){
+    vector<char*> argv;
+    for(int i=0;i<vec.size();i++){
+        argv.push_back(const_cast<char*>(vec[i].c_str()));
+    }
+    argv.push_back(nullptr);
+    
+    return argv;
 }
 
 int main() {
@@ -51,13 +63,16 @@ int main() {
         cout<<"type is a shell builtin\n";
       }
       else{
-        string temp=cmd1.substr(5);
+        string file_name=cmd1.substr(5);
         string path=getenv("PATH");
-        vector<string> directry=splitter(path);
+        vector<string> directry=splitter(path,':');
         bool file_done=false;
 
         for(auto each_path:directry){
-          auto new_path=each_path+'/'+cmd1.substr(5);
+
+          //creating whole path for that file
+          auto new_path=each_path+'/'+file_name;
+
           if(fs::exists(new_path) && fs::is_regular_file(new_path)){
             fs::file_status s = fs::status(new_path);
 
@@ -66,28 +81,40 @@ int main() {
             bool isExecutable = (p & fs::perms::owner_exec) != fs::perms::none;
 
             if(isExecutable){
-              cout<<cmd1.substr(5)<<" is "<<new_path<<"\n";
+              cout<<file_name<<" is "<<new_path<<"\n";
               file_done=true;
               break;
             }
           }
         }
         if(file_done==false){         
-          cout<<cmd1.substr(5)<<": not found\n";            
-        }
-
-
-
-        // if(1){
-        //   //here if found print path
-        // }
-        // else{
-        //   cout<<cmd1.substr(5)<<": not found\n";
-        // }
+          cout<<file_name<<": not found\n";            
+        }       
       }
     }
 
-    else cout<<cmd1<<": command not found\n";
+    else{
+      vector<string> argument=splitter(cmd1,' ');
+      vector<char*> exec_argument = converter(argument);
+
+      pid_t c=fork();
+      
+      if(c<0){
+          cout<<"Fork failed! (system failed)\n";
+      }
+      else if(c==0){
+          vector<char*> exec_argument=converter(argument);
+          execvp(argument[0].c_str(),exec_argument.data());  
+          
+          perror("Error");
+          exit(1);
+      }
+      else{
+          wait(NULL);
+      }
+
+
+    }
    
   }
 
