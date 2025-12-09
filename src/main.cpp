@@ -61,7 +61,7 @@ int main() {
       else if(word=="exit"){
         cout<<"exit is a shell builtin\n";
       }
-      else if(word=="type" || word=="pwd"){
+      else if(word=="type" || word=="pwd" || word == "cd"){
         cout<<word<<" is a shell builtin\n";
       }
       else{
@@ -97,6 +97,12 @@ int main() {
 
     else if(word == "pwd"){
       cout<<fs::current_path().string()<<"\n";
+    }
+
+    else if(word == "cd"){
+      string temp_directory=cmd1.substr(3);
+      fs::current_path(temp_directory);
+      cout<<"cd: "<<perror("Error");
     }
 
     else{
