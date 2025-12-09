@@ -101,8 +101,12 @@ int main() {
 
     else if(word == "cd"){
       string temp_directory=cmd1.substr(3);
-      fs::current_path(temp_directory);
-      perror("Error");
+      if(fs::exists(temp_directory) && fs::is_directory(temp_directory)){
+        fs::current_path(temp_directory);
+      }
+      else{
+        cout<<"cd: "<<temp_directory<<": No such file or directory\n";
+      }
     }
 
     else{
