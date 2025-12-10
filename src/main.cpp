@@ -100,12 +100,37 @@ int main() {
     }
 
     else if(word == "cd"){
-      string temp_directory=cmd1.substr(3);
-      if(fs::exists(temp_directory) && fs::is_directory(temp_directory)){
-        fs::current_path(temp_directory);
+      ss>>word;
+      if(word == '~'){
+        /*
+        it returns a pointer and why we are not directly storing it in fs::path. As, if it returns nullptr so it will crash the program if we store
+        it in fs::path so that is why
+        */
+        const char* home_ptr = getenv("HOME"); 
+
+        if(home_ptr == nullptr){
+          cout<<"Error: Home not set\n";
+        }
+        else{
+          fs::path home_path(home_ptr);
+
+          if(fs::exists(home_path)){
+            fs::current_path(home_path);
+          }
+          else{
+            cout<< "Error: HOME directory doesn't exist on disk\n";
+          }
+        }
+
       }
-      else{
-        cout<<"cd: "<<temp_directory<<": No such file or directory\n";
+      else {
+        string temp_directory=cmd1.substr(3);
+        if(fs::exists(temp_directory) && fs::is_directory(temp_directory)){
+          fs::current_path(temp_directory);
+        }
+        else{
+          cout<<"cd: "<<temp_directory<<": No such file or directory\n";
+        }
       }
     }
 
