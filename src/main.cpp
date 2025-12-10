@@ -101,7 +101,7 @@ int main() {
 
     else if(word == "cd"){
       ss>>word;
-      if(word == '~'){
+      if(word == "~"){
         /*
         it returns a pointer and why we are not directly storing it in fs::path. As, if it returns nullptr so it will crash the program if we store
         it in fs::path so that is why
