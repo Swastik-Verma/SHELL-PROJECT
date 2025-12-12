@@ -5,7 +5,7 @@
 using namespace std;
 namespace fs = filesystem;
 
-string quotes_splitter(string_view &str){
+string quotes_splitter(string &str){
     string final ="";
     bool in_quotes=false;
     string temp="";
@@ -78,7 +78,7 @@ int main() {
     
     else if(word=="echo"){
       if(cmd1.length()>5){
-        string_view abc = cmd1.substr(5);
+        string abc = cmd1.substr(5);
         cout<<quotes_splitter(abc);
       }
       cout<<"\n";
