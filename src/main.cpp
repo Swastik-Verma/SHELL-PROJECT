@@ -164,7 +164,7 @@ int main() {
     }
 
     else{
-      vector<string> argument=splitter(cmd1,' ');
+      vector<string> argument=quotes_splitter(cmd1,' ');
       vector<char*> exec_argument = converter(argument);
 
       pid_t c=fork();
