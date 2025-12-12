@@ -5,20 +5,49 @@
 using namespace std;
 namespace fs = filesystem;
 
+string quotes_splitter(string &str){
+    string final ="";
+    bool in_quotes=false;
+    string temp="";
+    for(auto c:str){
+        // cout<<c;
+        if(c=='\''){
+            in_quotes=(!in_quotes);
+        }
+        else if(c==' ' && !in_quotes){
+            if(temp!=""){
+                final+=temp;
+                final+=" ";
+                temp="";
+            }
+        }
+        else{
+            temp+=c;
+        }
+    }
+    if(temp!="") final+=temp;
+    return final;
+}
 
 //function to splite a string about ':'
-vector<string> splitter(string str,char s){
+vector<string> splitter(string &str,char s){
   vector<string> ans;
   size_t start=0;
   size_t end=str.find(s);
   while(end!=-1){
       ans.push_back(str.substr(start,end-start));
+    // // here i am using the string_view instead of substr and reason you can know
+    //   ans.push_back(string_view(start,end-start));
       start=end+1;
       end=str.find(s,start);
   }
   ans.push_back(str.substr(start));
+//   ans.push_back(string_view(start));
   return ans;
 }
+
+string path=getenv("PATH");
+vector<string> directry=splitter(path,':');
 
 vector<char*> converter(vector<string>& vec){
     vector<char*> argv;
@@ -48,9 +77,11 @@ int main() {
     if(cmd1=="exit") break; // implementing the exit builtin
     
     else if(word=="echo"){
-      cout<<cmd1.substr(5);
+      if(cmd1.length()>5){
+        string_view abc = cmd1.substr(5);
+        cout<<quotes_splitter(abc);
+      }
       cout<<"\n";
-      continue;
     }
 
     else if(word=="type"){           
@@ -66,8 +97,6 @@ int main() {
       }
       else{
         string file_name=cmd1.substr(5);
-        string path=getenv("PATH");
-        vector<string> directry=splitter(path,':');
         bool file_done=false;
 
         for(auto each_path:directry){
@@ -144,7 +173,7 @@ int main() {
           cout<<"Fork failed! (system failed)\n";
       }
       else if(c==0){
-          vector<char*> exec_argument=converter(argument);
+        //   vector<char*> exec_argument=converter(argument);
           execvp(argument[0].c_str(),exec_argument.data());  
           
           //this you have to print as a error message
