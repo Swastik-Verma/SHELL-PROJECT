@@ -5,8 +5,8 @@
 using namespace std;
 namespace fs = filesystem;
 
-string quotes_splitter(string &str){
-    string final ="";
+vector<string> quotes_splitter(string &str){
+    vector<string> final;
     bool in_quotes=false;
     string temp="";
     for(auto c:str){
@@ -16,8 +16,8 @@ string quotes_splitter(string &str){
         }
         else if(c==' ' && !in_quotes){
             if(temp!=""){
-                final+=temp;
-                final+=" ";
+                final.push_back(temp);
+                // final" ";
                 temp="";
             }
         }
@@ -25,7 +25,7 @@ string quotes_splitter(string &str){
             temp+=c;
         }
     }
-    if(temp!="") final+=temp;
+    if(temp!="") final.push_back(temp);
     return final;
 }
 
@@ -78,8 +78,11 @@ int main() {
     
     else if(word=="echo"){
       if(cmd1.length()>5){
-        string abc = cmd1.substr(5);
-        cout<<quotes_splitter(abc);
+        auto abc = cmd1.substr(5);
+        for(auto v: abc){
+          cout<<v<<" ";
+        }
+        // cout<<quotes_splitter(abc);
       }
       cout<<"\n";
     }
