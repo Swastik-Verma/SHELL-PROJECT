@@ -9,9 +9,19 @@ vector<string> quotes_splitter(string &str){
     vector<string> final;
     bool in_quotes=false;
     string temp="";
+    int num=0;
     for(auto c:str){
         // cout<<c;
-        if(c=='\''){
+        if(c=='\'' || '\"'){
+            if(in_quotes==false){
+              in_quotes=true;
+              if(c=='\'') num=1;
+              else num=2;
+            } 
+            else{
+              if((num==1 && c=='\'') || (num==2 && c=='\"')) in_quotes=false;
+              else temp+=c; //if(num==2 && c=='\'') temp+=c; 
+            }
             in_quotes=(!in_quotes);
         }
         else if(c==' ' && !in_quotes){
