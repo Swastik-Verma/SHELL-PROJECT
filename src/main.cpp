@@ -80,7 +80,7 @@ int main() {
       if(cmd1.length()>5){
         auto abc = cmd1.substr(5);
         for(auto v: abc){
-          cout<<v<<" ";
+          cout<<v;
         }
         // cout<<quotes_splitter(abc);
       }
