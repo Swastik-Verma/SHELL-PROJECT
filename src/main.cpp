@@ -12,7 +12,7 @@ vector<string> quotes_splitter(string &str){
     int num=0;
     for(int c=0;c<str.length();c++){
         // cout<<c;
-        if(str[c]=='\\'){
+        if(str[c]=='\\' && !in_quotes){
             if(c==str.length()-1) temp+=str[c];
             else{
                 c++;
