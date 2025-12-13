@@ -10,20 +10,27 @@ vector<string> quotes_splitter(string &str){
     bool in_quotes=false;
     string temp="";
     int num=0;
-    for(auto c:str){
+    for(int c=0;c<str.length();c++){
         // cout<<c;
-        if(c=='\'' || c=='\"'){
+        if(str[c]=='\\'){
+            if(c==str.length()-1) temp+=str[c];
+            else{
+                c++;
+                temp+=str[c];
+            }
+        }
+        else if(str[c]=='\'' || str[c]=='\"'){
             if(in_quotes==false){
               in_quotes=true;
-              if(c=='\'') num=1;
+              if(str[c]=='\'') num=1;
               else num=2;
             } 
             else{
               if((num==1 && c=='\'') || (num==2 && c=='\"')) in_quotes=false;
-              else temp+=c; //if(num==2 && c=='\'') temp+=c; 
+              else temp+=str[c]; //if(num==2 && c=='\'') temp+=c; 
             }
         }
-        else if(c==' ' && !in_quotes){
+        else if(str[c]==' ' && !in_quotes){
             if(temp!=""){
                 final.push_back(temp);
                 // final" ";
@@ -31,7 +38,7 @@ vector<string> quotes_splitter(string &str){
             }
         }
         else{
-            temp+=c;
+            temp+=str[c];
         }
     }
     if(temp!="") final.push_back(temp);
