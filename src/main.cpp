@@ -5,6 +5,7 @@
 using namespace std;
 namespace fs = filesystem;
 
+/*
 vector<string> quotes_splitter(string &str){
     vector<string> final;
     bool in_quotes=false;
@@ -44,8 +45,8 @@ vector<string> quotes_splitter(string &str){
     if(temp!="") final.push_back(temp);
     return final;
 }
+*/
 
-/*
 vector<string> quotes_splitter(string &str){
     vector<string> final;
     bool in_quotes=false;
@@ -60,7 +61,7 @@ vector<string> quotes_splitter(string &str){
                 temp+=str[c];
             }
             else if(in_quotes && num==2){
-                if(str[c+1]=='$' || str[c+1]=='`' || str=='\"'){
+                if(str[c+1]=='$' || str[c+1]=='`' || str[c+1]=='\"'){
                     c++;
                     temp+=str[c];
                 }
@@ -68,7 +69,7 @@ vector<string> quotes_splitter(string &str){
                     if(c+2<str.length()){
                         if(str[c+2]=='n'){
                             c+=2;
-                            temp+="\n";
+                            temp+="\\n";
                         }
                         else{
                             c++;
@@ -92,7 +93,7 @@ vector<string> quotes_splitter(string &str){
               else num=2;
             } 
             else{
-              if((num==1 && c=='\'') || (num==2 && c=='\"')) in_quotes=false;
+              if((num==1 && str[c]=='\'') || (num==2 && str[c]=='\"')) in_quotes=false;
               else temp+=str[c]; //if(num==2 && c=='\'') temp+=c; 
             }
         }
@@ -110,7 +111,7 @@ vector<string> quotes_splitter(string &str){
     if(temp!="") final.push_back(temp);
     return final;
 }
-*/
+
 
 //function to splite a string about ':'
 vector<string> splitter(string &str,char s){
