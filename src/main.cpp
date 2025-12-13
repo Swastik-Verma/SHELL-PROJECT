@@ -26,7 +26,7 @@ vector<string> quotes_splitter(string &str){
               else num=2;
             } 
             else{
-              if((num==1 && c=='\'') || (num==2 && c=='\"')) in_quotes=false;
+              if((num==1 && str[c]=='\'') || (num==2 && str[c]=='\"')) in_quotes=false;
               else temp+=str[c]; //if(num==2 && c=='\'') temp+=c; 
             }
         }
