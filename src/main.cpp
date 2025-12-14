@@ -5,47 +5,7 @@
 using namespace std;
 namespace fs = filesystem;
 
-/*
-vector<string> quotes_splitter(string &str){
-    vector<string> final;
-    bool in_quotes=false;
-    string temp="";
-    int num=0;
-    for(int c=0;c<str.length();c++){
-        // cout<<c;
-        if(str[c]=='\\' && !in_quotes){
-            if(c==str.length()-1) temp+=str[c];
-            else{
-                c++;
-                temp+=str[c];
-            }
-        }
-        else if(str[c]=='\'' || str[c]=='\"'){
-            if(in_quotes==false){
-              in_quotes=true;
-              if(str[c]=='\'') num=1;
-              else num=2;
-            } 
-            else{
-              if((num==1 && str[c]=='\'') || (num==2 && str[c]=='\"')) in_quotes=false;
-              else temp+=str[c]; //if(num==2 && c=='\'') temp+=c; 
-            }
-        }
-        else if(str[c]==' ' && !in_quotes){
-            if(temp!=""){
-                final.push_back(temp);
-                // final" ";
-                temp="";
-            }
-        }
-        else{
-            temp+=str[c];
-        }
-    }
-    if(temp!="") final.push_back(temp);
-    return final;
-}
-*/
+string output_final="";
 
 vector<string> quotes_splitter(string &str){
     vector<string> final;
@@ -77,18 +37,9 @@ vector<string> quotes_splitter(string &str){
                         }
                     }
                 }
-                else temp+=str[c];
-
-                
+                else temp+=str[c];             
             }
         }
-        // if(str[c]=='\\' && !in_quotes){
-        //     if(c==str.length()-1) temp+=str[c];
-        //     else{
-        //         c++;
-        //         temp+=str[c];
-        //     }
-        // }
         else if(str[c]=='\'' || str[c]=='\"'){
             if(in_quotes==false){
               in_quotes=true;
@@ -114,7 +65,6 @@ vector<string> quotes_splitter(string &str){
     if(temp!="") final.push_back(temp);
     return final;
 }
-
 
 //function to splite a string about ':'
 vector<string> splitter(string &str,char s){
@@ -146,6 +96,9 @@ vector<char*> converter(vector<string>& vec){
     return argv;
 }
 
+
+
+
 int main() {
   // Flush after every std::cout / std:cerr
   cout << std::unitbuf;
@@ -155,8 +108,16 @@ int main() {
   // i had to write the command not found until user doesn't stop
   while(true){
     cout<<"$ ";
+    output_final="";
     string cmd1;
     getline(cin,cmd1);
+    ofstream fout;
+    auto idx=cmd1.find('>');
+    if(idx!=-1){
+      string file_name=cmd1.substr(idx+2);
+      fout.open(file_name);
+      cmd1=cmd1.substr(0,idx-1);
+    }
     stringstream ss(cmd1);
     string word;
     ss>>word;
@@ -167,23 +128,28 @@ int main() {
       if(cmd1.length()>5){
         string abc = cmd1.substr(5);
         for(auto v: quotes_splitter(abc)){
-          cout<<v<<" ";
+          // cout<<v<<" ";
+          output_final+=(v+" ");
         }
         // cout<<quotes_splitter(abc);
       }
-      cout<<"\n";
+      // cout<<"\n";
+      output_final+="\n";
     }
 
     else if(word=="type"){           
       ss>>word;
       if(word=="echo"){
-        cout<<"echo is a shell builtin\n";
+        // cout<<"echo is a shell builtin\n";
+        output_final+="echo is a shell builtin\n";
       }
       else if(word=="exit"){
-        cout<<"exit is a shell builtin\n";
+        // cout<<"exit is a shell builtin\n";
+        output_final+="exit is a shell builtin\n";
       }
       else if(word=="type" || word=="pwd" || word == "cd"){
-        cout<<word<<" is a shell builtin\n";
+        // cout<<word<<" is a shell builtin\n";
+        output_final+=(word+" is a shell builting\n");
       }
       else{
         string file_name=cmd1.substr(5);
@@ -202,7 +168,8 @@ int main() {
             bool isExecutable = (p & fs::perms::owner_exec) != fs::perms::none;
 
             if(isExecutable){
-              cout<<file_name<<" is "<<new_path<<"\n";
+              // cout<<file_name<<" is "<<new_path<<"\n";
+              output_final+= file_name+" is "+new_path;
               file_done=true;
               break;
             }
@@ -215,7 +182,8 @@ int main() {
     }
 
     else if(word == "pwd"){
-      cout<<fs::current_path().string()<<"\n";
+      // cout<<fs::current_path().string()<<"\n";
+      output_final+=fs::current_path().string()+"\n";
     }
 
     else if(word == "cd"){
@@ -275,6 +243,17 @@ int main() {
       }
 
 
+    }
+    
+    // what i have got in output_final is something that i have to store if i got > in input
+    // cout<<output_final;
+    
+    if(idx!=-1){
+      fout<<output_final;
+      fout.close();
+    }
+    else{
+      cout<<output_final;
     }
    
   }
