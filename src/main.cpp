@@ -121,7 +121,6 @@ int main() {
     auto idx=cmd1.find('>');
 
     if(idx!=string::npos){
-      file_name=cmd1.substr(idx+2);
       
       if(cmd1[idx-1]=='2'){
         temp_fd=2;        
@@ -129,15 +128,17 @@ int main() {
       else{
         temp_fd=1;
       }    
-
+      
       saved_stdout=dup(temp_fd);
       int fd_required;
       int flag;
       if(cmd1[idx+1]=='>'){
         flag = O_WRONLY | O_CREAT | O_APPEND;
+        file_name=cmd1.substr(idx+3);
       }
       else{
         flag = O_WRONLY | O_CREAT | O_TRUNC;
+        file_name=cmd1.substr(idx+2);
       }
       fd_required=open(file_name.c_str(),flag,0644);
       cmd1=cmd1.substr(0,idx-1);
