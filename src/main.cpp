@@ -9,7 +9,7 @@
 using namespace std;
 namespace fs = filesystem;
 
-string output_final="";
+// string output_final="";
 
 vector<string> quotes_splitter(string &str){
     vector<string> final;
@@ -111,20 +111,20 @@ int main() {
   // i had to write the command not found until user doesn't stop
   while(true){
     cout<<"$ ";
-    output_final="";
+    // output_final="";
     string cmd1;
     getline(cin,cmd1);
 
-    auto idx=cmd1.find('>');
+    // auto idx=cmd1.find('>');
 
-    if(idx!=string::npos){
-      string file_name=cmd1.substr(idx+2);
-      cmd1=cmd1.substr(0,idx-1);
+    // if(idx!=string::npos){
+    //   string file_name=cmd1.substr(idx+2);
+    //   cmd1=cmd1.substr(0,idx-1);
 
-      auto fd_required=open(file_name.c_str(), O_WRONLY | O_CREAT | O_TRUNC,0644);
-      dup2(fd_required,1);
-      close(fd_required);
-    }
+    //   auto fd_required=open(file_name.c_str(), O_WRONLY | O_CREAT | O_TRUNC,0644);
+    //   dup2(fd_required,1);
+    //   close(fd_required);
+    // }
 
     stringstream ss(cmd1);
     string word;
@@ -231,6 +231,18 @@ int main() {
           cout<<"Fork failed! (system failed)\n";
       }
       else if(c==0){
+
+
+        auto idx=cmd1.find('>');
+        if(idx!=string::npos){
+          string file_name=cmd1.substr(idx+2);
+          cmd1=cmd1.substr(0,idx-1);
+
+          auto fd_required=open(file_name.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
+          dup2(fd_required,1);
+          close(fd_required);
+        }
+
         //   vector<char*> exec_argument=converter(argument);
           execvp(argument[0].c_str(),exec_argument.data());  
           
