@@ -116,16 +116,25 @@ int main() {
     getline(cin,cmd1);
     string file_name;
     int saved_stdout;
+    int temp_fd;
 
     auto idx=cmd1.find('>');
 
     if(idx!=string::npos){
       file_name=cmd1.substr(idx+2);
+      
+      if(cmd1[idx-1]=='2'){
+        temp_fd=2;        
+      }
+      else{
+        temp_fd=1;
+      }
+      
       cmd1=cmd1.substr(0,idx-1);
 
-      saved_stdout=dup(1);
+      saved_stdout=dup(temp_fd);
       auto fd_required=open(file_name.c_str(), O_WRONLY | O_CREAT | O_TRUNC,0644);
-      dup2(fd_required,1);
+      dup2(fd_required,temp_fd);
       close(fd_required);
     }
 
@@ -245,7 +254,7 @@ int main() {
           wait(NULL);
       }
     }      
-    dup2(saved_stdout,1);
+    dup2(saved_stdout,temp_fd);
     close(saved_stdout);
   }
 }
