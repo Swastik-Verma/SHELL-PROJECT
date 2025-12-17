@@ -128,18 +128,19 @@ int main() {
       }
       else{
         temp_fd=1;
-      }
-      
-      cmd1=cmd1.substr(0,idx-1);
+      }    
 
       saved_stdout=dup(temp_fd);
       int fd_required;
+      int flag;
       if(cmd1[idx+1]=='>'){
-        fd_required=open(file_name.c_str(), O_WRONLY | O_CREAT, 0644);
+        flag = O_WRONLY | O_CREAT | O_APPEND;
       }
       else{
-        fd_required=open(file_name.c_str(), O_WRONLY | O_CREAT | O_TRUNC,0644);
+        flag = O_WRONLY | O_CREAT | O_TRUNC;
       }
+      fd_required=open(file_name.c_str(),flag,0644);
+      cmd1=cmd1.substr(0,idx-1);
       dup2(fd_required,temp_fd);
       close(fd_required);
     }
