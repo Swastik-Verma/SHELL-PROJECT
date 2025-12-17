@@ -133,11 +133,12 @@ int main() {
       cmd1=cmd1.substr(0,idx-1);
 
       saved_stdout=dup(temp_fd);
+      int fd_required;
       if(cmd1[idx+1]=='>'){
-        auto fd_required=open(file_name.c_str(), O_WRONLY | O_CREAT, 0644);
+        fd_required=open(file_name.c_str(), O_WRONLY | O_CREAT, 0644);
       }
       else{
-        auto fd_required=open(file_name.c_str(), O_WRONLY | O_CREAT | O_TRUNC,0644);
+        fd_required=open(file_name.c_str(), O_WRONLY | O_CREAT | O_TRUNC,0644);
       }
       dup2(fd_required,temp_fd);
       close(fd_required);
