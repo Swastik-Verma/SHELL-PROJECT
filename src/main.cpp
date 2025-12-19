@@ -120,8 +120,8 @@ vector<char*> converter(vector<string>& vec){
 string read_input(){
   string input="";
   string temp="";
-  vector<string> prefix={"ex","exi","ec","ech"};
-  vector<string> print={"it","t","ho","o"};
+  vector<string> prefix={"ex","exi","ec","ech","t","ty","typ","c","p","pw"};
+  vector<string> print={"it","t","ho","o","ype","pe","e","d","wd","d"};
   
   while(true){
       int c = getchar();
@@ -145,6 +145,9 @@ string read_input(){
                   cout<<print[it-prefix.begin()]<<" ";
                   input+=(print[it-prefix.begin()]+" ");
                   temp="";
+              }
+              else{
+                cout<<"\x07";
               }
           } 
           continue;
