@@ -281,11 +281,11 @@ int main() {
   cerr << std::unitbuf;
 
 
+  populate_();
   // i had to write the command not found until user doesn't stop
   while(true){
     enableRawMode();
     cout<<"$ ";
-    populate_();
     string cmd1;
 
     cmd1 = read_input();
