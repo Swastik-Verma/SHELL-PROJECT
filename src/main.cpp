@@ -207,7 +207,7 @@ string read_input(){
             for(auto v:all_executables){
                 cout<<v<<"  ";
             }
-            cout<<"\n"<<input;
+            cout<<"\n$ "<<input;
             previous_tab=0;
         }
         
