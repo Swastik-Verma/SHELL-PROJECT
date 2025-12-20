@@ -264,11 +264,13 @@ int main() {
   populate_();
   // i had to write the command not found until user doesn't stop
   while(true){
-    enableRawMode();
     cout<<"$ ";
     string cmd1;
+    
+    enableRawMode();
+    cmd1 = read_input(); 
+    disableRawMode();
 
-    cmd1 = read_input();
     vector<string> argument=quotes_splitter(cmd1);
 
     // getline(cin,cmd1);
@@ -276,15 +278,18 @@ int main() {
     int saved_stdout=-1;
     bool redirection_active=false;
     int temp_fd;
+    stringstream ss(cmd1);
+    string word;
+    ss>>word;
 
 
     int idx_ = cmd1.find('|');
     if(idx_ != string::npos   && idx_>=1 && (idx_+2)<cmd1.length()){
         string path1_="";
         string path2_="";
-        path1_=cmd1.substr(0,idx_-1);
+        path1_=cmd1.substr(0,idx_);
     
-        path2_=cmd1.substr(idx_+2);
+        path2_=cmd1.substr(idx_+1);
        
         vector<string> args1_=quotes_splitter(path1_);
         vector<char*> args_path1_ = converter(args1_);
@@ -371,11 +376,8 @@ int main() {
       redirection_active=true;
     }
 
-    stringstream ss(cmd1);
-    string word;
-    ss>>word;
 
-    if(cmd1=="exit") break; // implementing the exit builtin
+    else if(cmd1=="exit") break; // implementing the exit builtin
     
     else if(word=="echo"){
       if(cmd1.length()>5){
@@ -494,6 +496,5 @@ int main() {
   }
 
 
-  disableRawMode();
   return 0;
 }
