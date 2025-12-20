@@ -283,6 +283,36 @@ int main() {
     ss>>word;
 
 
+    
+    if(cmd1.find('>') != string::npos){
+      int idx=cmd1.find('>');
+      
+      if(cmd1[idx-1]=='2'){
+        temp_fd=2;        
+      }
+      else{
+        temp_fd=1;
+      }    
+      
+      saved_stdout=dup(temp_fd);
+      int fd_required;
+      int flag;
+      if(cmd1[idx+1]=='>'){
+        flag = O_WRONLY | O_CREAT | O_APPEND;
+        file_name=cmd1.substr(idx+3);
+      }
+      else{
+        flag = O_WRONLY | O_CREAT | O_TRUNC;
+        file_name=cmd1.substr(idx+2);
+      }
+      fd_required=open(file_name.c_str(),flag,0644);
+      cmd1=cmd1.substr(0,idx-1);
+      dup2(fd_required,temp_fd);
+      close(fd_required);
+      redirection_active=true;
+    }
+    
+    
     int idx_ = cmd1.find('|');
     if(idx_ != string::npos   && idx_>=1 && (idx_+2)<cmd1.length()){
         string path1_="";
@@ -347,35 +377,6 @@ int main() {
         wait(NULL);
         wait(NULL); 
     }
-
-    else if(cmd1.find('>') != string::npos){
-      int idx=cmd1.find('>');
-      
-      if(cmd1[idx-1]=='2'){
-        temp_fd=2;        
-      }
-      else{
-        temp_fd=1;
-      }    
-      
-      saved_stdout=dup(temp_fd);
-      int fd_required;
-      int flag;
-      if(cmd1[idx+1]=='>'){
-        flag = O_WRONLY | O_CREAT | O_APPEND;
-        file_name=cmd1.substr(idx+3);
-      }
-      else{
-        flag = O_WRONLY | O_CREAT | O_TRUNC;
-        file_name=cmd1.substr(idx+2);
-      }
-      fd_required=open(file_name.c_str(),flag,0644);
-      cmd1=cmd1.substr(0,idx-1);
-      dup2(fd_required,temp_fd);
-      close(fd_required);
-      redirection_active=true;
-    }
-
 
     else if(cmd1=="exit") break; // implementing the exit builtin
     
