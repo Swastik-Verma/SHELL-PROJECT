@@ -142,86 +142,6 @@ vector<char*> converter(vector<string>& vec){
     return argv;
 }
 
-
-// string read_input(){
-//   string input="";
-//   string temp="";
-//   vector<string> prefix=listof_files;//{"ex","exi","ec","ech","t","ty","typ","c","p","pw"};
-//   bool previous_tab=0;
-//   vector<string> all_executables;
-    
-//     while(true){
-//         int c = getchar();
-//         if(previous_tab && c==9){
-//             cout<<"\n";
-//             for(auto v:all_executables){
-//                 cout<<v<<"  ";
-//             }
-//             cout<<"\n$ "<<input;
-//             previous_tab=0;
-//         }
-        
-//         else if(c==127){   // backspace ascii is 127
-//             if(input!=""){
-//                 cout<<"\b \b";
-//                 input=input.erase(input.size()-1,1);
-//                 if(temp!=""){
-//                     temp=temp.erase(temp.size()-1,1);
-//                 }
-//             }
-//             previous_tab=0;
-      
-//         }
-//         else if(c==10){  //break by pressing enter
-//             cout<<"\n";
-//             return input;
-//         }
-//         else if(c==9){ // vertical tab
-        
-//             if(temp!=""){
-//                 all_executables.clear();
-//                 string temp_str="";
-//                 for(auto v:listof_files){
-//                     string t="";
-//                     if(temp.size() <= v.size()) t=v.substr(0,temp.size());
-//                     if(t==temp){
-//                         temp_str=v.substr(temp.size());
-//                         all_executables.push_back(v);
-//                     }
-//                 }
-                
-//                 if(all_executables.size()==1){
-//                     cout<<temp_str<<" ";
-//                     input+=(temp_str+" ");
-//                     temp="";
-//                 }
-//                 else if(all_executables.size()>1){
-//                     sort(all_executables.begin(),all_executables.end());
-//                     cout<<"\x07";
-//                     previous_tab=1;
-//                 }
-//                 else{
-//                     cout<<"\x07";
-//                 }
-//             } 
-//             continue;
-//         }
-//         else{
-//             input+=char(c);
-//             if(c==32){
-//                 temp="";
-//             }
-//             else temp+=char(c);
-//             cout<<char(c);
-//             previous_tab=0;
-//         }
-//         cout.flush();
-//     }
-
-//     return input; 
-// }
-
-
 string lcp="";
 void lcp_(string str){
     if(lcp=="") lcp=str;
@@ -349,12 +269,74 @@ int main() {
     string cmd1;
 
     cmd1 = read_input();
+    vector<string> argument=quotes_splitter(cmd1);
 
     // getline(cin,cmd1);
     string file_name;
     int saved_stdout=-1;
     bool redirection_active=false;
     int temp_fd;
+
+
+    int idx_ = cmd1.find('|');
+    if(idx_ != string::npos){
+        auto it = find(argument.begin(),argument.end(),"|");
+        it--;
+        string path1_=argument[it-argument.begin()];
+        char* args_path1_[] = {(char*)path1_.c_str(), NULL};
+        it+=2;
+        string path2_=argument[it-argument.begin()];
+        char* args_path2_[] = {(char*)path2_.c_str(), NULL};
+        int fd[2];
+        pipe(fd);
+        
+        // fd[0] represents the read end of pipe (that is input)
+        // fd[1] represents the write end of pipe (that is output)
+        // cout<<fd[0]<<" "<<fd[1];
+        pid_t c = fork();
+        if(c<0){
+            cout<<"Fork failed\n";
+        }
+        else if(c==0){
+            cout<<"Fork done\n";
+            int saved_out=dup(1);
+            dup2(fd[1],1);   // why we are writing the fd[1] as we will be writing to the write end of it
+            close(fd[1]);
+            execvp(path1_.c_str(),args_path1_);
+            dup2(saved_out,1);
+            close(saved_out);
+            //this you have to print as a error message
+            cout << cmd1 << ": command not found\n";
+            exit(1);
+        }
+        // else wait(NULL);  // we have to run both the forks at the same time so we can't wait for only one program here so we will wait until both the forks are not done that is we will wait at the end of both forks
+        
+        pid_t c1 = fork();
+        if(c1<0){
+            cout<<"Fork failed\n";
+        }
+        else if(c1==0){
+            cout<<"Fork done\n";
+            int saved_out = dup(0);
+            dup2(fd[0],0);
+            close(fd[0]);
+            execvp(path2_.c_str(),args_path2_);
+            dup2(saved_out,0);
+            close(saved_out);
+            
+            //this you have to print as a error message
+            cout << cmd1 << ": command not found\n";
+            exit(1);
+        }
+        // else wait(NULL);   // we have to run both the forks at the same time so we can't wait for only one program here so we will wait until both the forks are not done that is we will wait at the end of both forks
+        
+        close(fd[0]);
+        close(fd[1]);
+        
+        // DO REMEMBER YOU HAVE TO WRITE THE wait(NULL) command 2 times as there above 2 child's processes need to be closed
+        wait(NULL);
+        wait(NULL); 
+    }
 
     auto idx=cmd1.find('>');
 
@@ -481,7 +463,7 @@ int main() {
     }
 
     else{
-      vector<string> argument=quotes_splitter(cmd1);
+      // vector<string> argument=quotes_splitter(cmd1);
       vector<char*> exec_argument = converter(argument);
 
       pid_t c=fork();
