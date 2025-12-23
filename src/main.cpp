@@ -345,6 +345,7 @@ bool builtin_execute(string cmd1){
           cout<<"cd: "<<temp_directory<<": No such file or directory\n";
         }
       }
+      return true;
     }
     
     return false;
