@@ -248,7 +248,107 @@ string read_input(){
     return input; 
 }
 
+bool builtin_execute(string cmd1){
+    stringstream ss;
+    string word;
+    ss(cmd1);
+    ss>>word;
+    
+    // if(cmd1 == "exit") break; ye on the spot lagaana pdega
+    if(word == "echo"){
+        if(cmd1.length() > 5){
+            string abc = cmd1.substr(5);
+            for(auto v: quotes_splitter(abc)){
+                cout<<v<<" ";
+            }
+        }
+        cout<<"\n";
+        return true;
+    }
+    else if(word == "type"){
+          ss>>word;
+          if(word=="echo"){
+            cout<<"echo is a shell builtin\n";
+          }
+          else if(word=="exit"){
+            cout<<"exit is a shell builtin\n";
+          }
+          else if(word=="type" || word=="pwd" || word == "cd"){
+            cout<<word<<" is a shell builtin\n";
+          }
+          else{
+            string file_name=cmd1.substr(5);
+            bool file_done=false;
+    
+            for(auto each_path:directry){
+    
+              //creating whole path for that file
+              auto new_path=each_path+'/'+file_name;
+    
+              if(fs::exists(new_path) && fs::is_regular_file(new_path)){
+                fs::file_status s = fs::status(new_path);
+    
+                fs::perms p = s.permissions();
+    
+                bool isExecutable = (p & fs::perms::owner_exec) != fs::perms::none;
+    
+                if(isExecutable){
+                  cout<<file_name<<" is "<<new_path<<"\n";
+                  file_done=true;
+                  break;
+                }
+              }
+            }
+            if(file_done==false){         
+              cout<<file_name<<": not found\n";            
+            }       
+          }
+          
+          return true;
+    }
+    
+    else if(word == "pwd"){
+        cout<<fs::current_path().string()<<"\n";
+        return true;
+    }
+    
+    else if(word == "cd"){
+      ss>>word;
+      if(word == "~"){
+        /*
+        it returns a pointer and why we are not directly storing it in fs::path. As, if it returns nullptr so it will crash the program if we store
+        it in fs::path so that is why
+        */
+        const char* home_ptr = getenv("HOME"); 
 
+        if(home_ptr == nullptr){
+          cout<<"Error: Home not set\n";
+        }
+        else{
+          fs::path home_path(home_ptr);
+
+          if(fs::exists(home_path)){
+            fs::current_path(home_path);
+          }
+          else{
+            cout<< "Error: HOME directory doesn't exist on disk\n";
+          }
+        }
+
+      }
+      else {
+        string temp_directory=cmd1.substr(3);
+        if(fs::exists(temp_directory) && fs::is_directory(temp_directory)){
+          fs::current_path(temp_directory);
+        }
+        else{
+          cout<<"cd: "<<temp_directory<<": No such file or directory\n";
+        }
+      }
+    }
+    
+    return false;
+}
 
 
 
@@ -277,9 +377,9 @@ int main() {
     int saved_stdout=-1;
     bool redirection_active=false;
     int temp_fd;
-    stringstream ss(cmd1);
-    string word;
-    ss>>word;
+    // stringstream ss(cmd1);
+    // string word;
+    // ss>>word;
     
     
     
@@ -343,7 +443,10 @@ int main() {
             dup2(fd[1],1);   // why we are writing the fd[1] as we will be writing to the write end of it
             close(fd[1]);
             close(fd[0]);
-            execvp(args_path1_[0],args_path1_.data());
+            if(path1_ == "exit") break;
+            else if(!builtin_execute(path1_)){
+              execvp(args_path1_[0],args_path1_.data());
+            }
             dup2(saved_out,1);
             close(saved_out);
             //this you have to print as a error message
@@ -362,7 +465,10 @@ int main() {
             dup2(fd[0],0);
             close(fd[0]);
             close(fd[1]);
-            execvp(args_path2_[0],args_path2_.data());
+            if(path2_=="exit") break;
+            else if(!builtin_execute(path2_)){
+              execvp(args_path2_[0],args_path2_.data());
+            }
             dup2(saved_out,0);
             close(saved_out);
             
@@ -383,96 +489,11 @@ int main() {
 
     else if(cmd1=="exit") break; // implementing the exit builtin
     
-    else if(word=="echo"){
-      if(cmd1.length()>5){
-        string abc = cmd1.substr(5);
-        for(auto v: quotes_splitter(abc)){
-          cout<<v<<" ";
-        } 
-      }
-      cout<<"\n";
-    }
-
-    else if(word=="type"){           
-      ss>>word;
-      if(word=="echo"){
-        cout<<"echo is a shell builtin\n";
-      }
-      else if(word=="exit"){
-        cout<<"exit is a shell builtin\n";
-      }
-      else if(word=="type" || word=="pwd" || word == "cd"){
-        cout<<word<<" is a shell builtin\n";
-      }
-      else{
-        string file_name=cmd1.substr(5);
-        bool file_done=false;
-
-        for(auto each_path:directry){
-
-          //creating whole path for that file
-          auto new_path=each_path+'/'+file_name;
-
-          if(fs::exists(new_path) && fs::is_regular_file(new_path)){
-            fs::file_status s = fs::status(new_path);
-
-            fs::perms p = s.permissions();
-
-            bool isExecutable = (p & fs::perms::owner_exec) != fs::perms::none;
-
-            if(isExecutable){
-              cout<<file_name<<" is "<<new_path<<"\n";
-              file_done=true;
-              break;
-            }
-          }
-        }
-        if(file_done==false){         
-          cout<<file_name<<": not found\n";            
-        }       
-      }
-    }
-
-    else if(word == "pwd"){
-      cout<<fs::current_path().string()<<"\n";
-    }
-
-    else if(word == "cd"){
-      ss>>word;
-      if(word == "~"){
-        /*
-        it returns a pointer and why we are not directly storing it in fs::path. As, if it returns nullptr so it will crash the program if we store
-        it in fs::path so that is why
-        */
-        const char* home_ptr = getenv("HOME"); 
-
-        if(home_ptr == nullptr){
-          cout<<"Error: Home not set\n";
-        }
-        else{
-          fs::path home_path(home_ptr);
-
-          if(fs::exists(home_path)){
-            fs::current_path(home_path);
-          }
-          else{
-            cout<< "Error: HOME directory doesn't exist on disk\n";
-          }
-        }
-
-      }
-      else {
-        string temp_directory=cmd1.substr(3);
-        if(fs::exists(temp_directory) && fs::is_directory(temp_directory)){
-          fs::current_path(temp_directory);
-        }
-        else{
-          cout<<"cd: "<<temp_directory<<": No such file or directory\n";
-        }
-      }
-    }
-
-    else{
+    /*
+    Below using this builtin_execute function i am executing the other commands of cmd1
+    */
+   
+    else if(!builtin_execute(cmd1)){
       // vector<string> argument=quotes_splitter(cmd1);   // actually this line i have implemented above where i am reading cmd1
       vector<char*> exec_argument = converter(argument);
 
