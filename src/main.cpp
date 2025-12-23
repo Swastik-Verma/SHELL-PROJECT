@@ -257,11 +257,12 @@ bool builtin_execute(string cmd1){
     if(word == "echo"){
         if(cmd1.length() > 5){
             string abc = cmd1.substr(5);
-            for(auto v: quotes_splitter(abc)){
-                cout<<v<<" ";
+            auto abc_splittedVector = quotes_splitter(abc);
+            for(auto v: abc_splittedVector){
+                if(v == abc_splittedVector[abc_splittedVector.size()-1]) cout<<v<<"\n";
+                else cout<<v<<" ";
             }
         }
-        cout<<"\n";
         return true;
     }
     else if(word == "type"){
@@ -442,7 +443,11 @@ int main() {
             dup2(fd[1],1);   // why we are writing the fd[1] as we will be writing to the write end of it
             close(fd[1]);
             close(fd[0]);
-            if(path1_ == "exit") break;
+            if(path1_ == "exit"){
+              dup2(saved_out,1);
+              close(saved_out);
+              break;
+            }
             else if(!builtin_execute(path1_)){
               execvp(args_path1_[0],args_path1_.data());
               //this you have to print as a error message
@@ -451,6 +456,7 @@ int main() {
             }
             dup2(saved_out,1);
             close(saved_out);
+            exit(0);
         }
         // else wait(NULL);  // we have to run both the forks at the same time so we can't wait for only one program here so we will wait until both the forks are not done that is we will wait at the end of both forks
         
@@ -464,7 +470,11 @@ int main() {
             dup2(fd[0],0);
             close(fd[0]);
             close(fd[1]);
-            if(path2_=="exit") break;
+            if(path2_=="exit"){
+              dup2(saved_out,0);
+              close(saved_out);
+              break;
+            } 
             else if(!builtin_execute(path2_)){
               execvp(args_path2_[0],args_path2_.data());
               //this you have to print as a error message
@@ -473,7 +483,7 @@ int main() {
             }
             dup2(saved_out,0);
             close(saved_out);
-            
+            exit(0);
         }
         // else wait(NULL);   // we have to run both the forks at the same time so we can't wait for only one program here so we will wait until both the forks are not done that is we will wait at the end of both forks
         
