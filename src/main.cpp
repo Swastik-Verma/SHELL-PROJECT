@@ -445,12 +445,12 @@ int main() {
             if(path1_ == "exit") break;
             else if(!builtin_execute(path1_)){
               execvp(args_path1_[0],args_path1_.data());
+              //this you have to print as a error message
+              cout << cmd1 << ": command not found\n";
+              exit(1);
             }
             dup2(saved_out,1);
             close(saved_out);
-            //this you have to print as a error message
-            cout << cmd1 << ": command not found\n";
-            exit(1);
         }
         // else wait(NULL);  // we have to run both the forks at the same time so we can't wait for only one program here so we will wait until both the forks are not done that is we will wait at the end of both forks
         
@@ -467,13 +467,13 @@ int main() {
             if(path2_=="exit") break;
             else if(!builtin_execute(path2_)){
               execvp(args_path2_[0],args_path2_.data());
+              //this you have to print as a error message
+              cout << cmd1 << ": command not found\n";
+              exit(1);
             }
             dup2(saved_out,0);
             close(saved_out);
             
-            //this you have to print as a error message
-            cout << cmd1 << ": command not found\n";
-            exit(1);
         }
         // else wait(NULL);   // we have to run both the forks at the same time so we can't wait for only one program here so we will wait until both the forks are not done that is we will wait at the end of both forks
         
