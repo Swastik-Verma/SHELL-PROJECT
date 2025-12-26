@@ -404,7 +404,7 @@ int main() {
   populate_();
   // i had to write the command not found until user doesn't stop
 
-  rl_attempted_completion_function = custom_completion
+  rl_attempted_completion_function = custom_completion;
   while(true){
     // cout<<"$ ";
     string cmd1;
