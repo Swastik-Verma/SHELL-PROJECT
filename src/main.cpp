@@ -353,7 +353,7 @@ bool builtin_execute(string cmd1){
       ss>>word;
       int temp_idx=stoi(word);
       if(temp_idx<=0) return true;
-      for(int i=(temp_idx+1);i<=History_tracker.size();i++){
+      for(int i=(History_tracker-temp_idx+1);i<=History_tracker.size();i++){
         cout<<i-1<<" "<<History_tracker[i-1]<<"\n";
       }
       return true;
