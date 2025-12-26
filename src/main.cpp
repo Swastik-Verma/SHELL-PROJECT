@@ -394,8 +394,10 @@ int main() {
     
     // it is implementing the ctrl+D command of shell
     if(!unmodified_cmd) break;
+    if(cmd1.length() > 0) add_history(unmodified_cmd);
     
     cmd1=string(unmodified_cmd);
+    free(unmodified_cmd);
 
     if(cmd1.length() > 0) History_tracker.push_back(cmd1);
     // getline(cin,cmd1);
