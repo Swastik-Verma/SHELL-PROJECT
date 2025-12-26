@@ -351,10 +351,11 @@ bool builtin_execute(string cmd1){
 
     else if(word == "history"){
       ss>>word;
-      int temp_idx=stoi(word);
+      int temp_idx=History_tracker.size();
+      if(word!="history") temp_idx=stoi(word);
       if(temp_idx<=0) return true;
       for(int i=(History_tracker.size()-temp_idx+1);i<=History_tracker.size();i++){
-        cout<<i-1<<" "<<History_tracker[i-1]<<"\n";
+        cout<<i<<" "<<History_tracker[i-1]<<"\n";
       }
       return true;
     }
