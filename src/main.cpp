@@ -28,6 +28,7 @@ using namespace std;
 namespace fs = filesystem;
 
 // string output_final="";
+vector<string> History_tracker;
 
 vector<string> quotes_splitter(string &str){
     vector<string> final;
@@ -347,6 +348,13 @@ bool builtin_execute(string cmd1){
       }
       return true;
     }
+
+    else if(word == "history"){
+      for(int i=1;i<=History_tracker.size();i++){
+        cout<<i-1<<" "<<History_tracker[i-1]<<"\n";
+      }
+      return true;
+    }
     
     return false;
 }
@@ -372,7 +380,7 @@ int main() {
     cmd1 = read_input(); 
     disableRawMode();
 
-    
+    History_tracker.push_back(cmd1);
     // getline(cin,cmd1);
     string file_name;
     int saved_stdout=-1;
@@ -606,6 +614,7 @@ int main() {
                     close(fd[0]);
                     
                     if(path1_ == "exit"){
+                        History_tracker.clear();
                         exit(0);
                     }
                     else if(builtin_execute(path1_)) exit(0);
@@ -642,7 +651,10 @@ int main() {
                    close(next_fd);
                 }
                 
-                if(path2_=="exit") exit(0);
+                if(path2_=="exit"){
+                  History_tracker.clear();
+                  exit(0);
+                }
                 
                 else if(builtin_execute(path2_)) exit(0);
                 
@@ -666,7 +678,10 @@ int main() {
 
 
 
-    else if(cmd1=="exit") break; // implementing the exit builtin
+    else if(cmd1=="exit"){
+      History_tracker.clear();
+      break;
+    }
     
     /*
     Below using this builtin_execute function i am executing the other commands of cmd1
