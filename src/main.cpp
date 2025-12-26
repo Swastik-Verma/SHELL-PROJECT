@@ -383,7 +383,7 @@ int main() {
   populate_();
   // i had to write the command not found until user doesn't stop
 
-  rl_blind_key('\t', rl_complete);
+  rl_bind_key('\t', rl_complete);
   while(true){
     // cout<<"$ ";
     string cmd1;
