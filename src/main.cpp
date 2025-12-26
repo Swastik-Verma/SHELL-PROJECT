@@ -6,6 +6,8 @@
 # include<fcntl.h>
 # include<unistd.h>
 # include<termios.h>
+# include<readline/readline.h>
+# include<readline/history.h>
 
 struct termios information;
 
@@ -125,6 +127,7 @@ void populate_(){
   listof_files.push_back("cd");
   listof_files.push_back("type");
   listof_files.push_back("exit");
+  listof_files.push_back("history");
 
 
   //actually we need to do some more things on the listof_files array as it may contain duplicate due so different each_path may contain the same files so that is why from it we will have to remove the duplicate so that is what we gonna do just below
@@ -161,6 +164,7 @@ void lcp_(string str){
 string read_input(){
   string input="";
   string temp="";
+  string temporary_arrow_string="";
   vector<string> prefix=listof_files;//{"ex","exi","ec","ech","t","ty","typ","c","p","pw"};
   bool previous_tab=0;
   vector<string> all_executables;
@@ -176,6 +180,8 @@ string read_input(){
             previous_tab=0;
         }
         
+        
+
         else if(c==127){   // backspace ascii is 127
             if(input!=""){
                 cout<<"\b \b";
@@ -380,9 +386,15 @@ int main() {
     cout<<"$ ";
     string cmd1;
     
-    enableRawMode();
-    cmd1 = read_input(); 
-    disableRawMode();
+    // enableRawMode();
+    // cmd1 = read_input(); 
+    // disableRawMode();
+
+    char* unmodified_cmd=readline("$ ");
+    
+    if(!unmodified_cmd) break;
+    
+    cmd1=string(unmodified_cmd);
 
     History_tracker.push_back(cmd1);
     // getline(cin,cmd1);
