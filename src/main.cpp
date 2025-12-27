@@ -476,7 +476,7 @@ int main() {
   
   rl_attempted_completion_function = my_autocompletion;  // it is related to the readline() functionality
   
-  auto path = getenv("HISTFILE");
+  string path = getenv("HISTFILE");
   if(fs::exists(path)){
     builtin_execute("history -r "+path);
   }
