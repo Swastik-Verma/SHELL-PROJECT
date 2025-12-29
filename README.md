@@ -6,7 +6,7 @@ This project is a custom implementation of a Unix shell, mimicking the core func
 
 ---
 
-## 🚀 Features
+## Features
 
 Based on the completed project extentions, this shell supports a wide range of functionalities:
 
@@ -47,7 +47,7 @@ Based on the completed project extentions, this shell supports a wide range of f
 
 ---
 
-## 🧠 How It Works Internally
+## How It Works Internally
 
 This project relies heavily on standard Unix system calls and C++ systems programming concepts:
 
@@ -65,7 +65,7 @@ This project relies heavily on standard Unix system calls and C++ systems progra
 
 ---
 
-## 🛠️ Getting Started
+## Getting Started
 
 ### Prerequisites
 
